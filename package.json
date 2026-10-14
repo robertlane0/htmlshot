@@ -1,0 +1,23 @@
+{
+  "name": "htmlshot",
+  "version": "0.1.0",
+  "description": "Render a local HTML file in headless Electron and save a PNG screenshot",
+  "license": "MIT",
+  "author": "Robert Lane",
+  "type": "commonjs",
+  "main": "src/renderer.js",
+  "bin": {
+    "htmlshot": "bin/htmlshot.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "electron": "44.7.2"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "test:acceptance": "node --test test/integration.test.js",
+    "postinstall": "electron --version"
+  }
+}

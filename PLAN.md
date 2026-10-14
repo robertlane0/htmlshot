@@ -419,13 +419,20 @@ Also: `--width 400 --height 300` produces a 400×300 PNG; `--no-sandbox` prints 
 
 ## 9. Phased task list with done-criteria
 
-- [ ] **P1 — Scaffolding.** `package.json` (+exact electron pin), `bin/`+`src/`+`test/` skeleton, `--help`/`--version` only. Done: `node bin/htmlshot.js --help` exits 0.
-- [ ] **P2 — Launcher validation.** Arg parser, exit 2/3/4 paths, `sanitizeBase`, stamp/rand naming, unit tests green. Done: all error-path tests pass without Electron.
-- [ ] **P3 — Renderer skeleton.** `src/renderer.js` loads `file://` URL in hidden window, writes dummy `result.json`+`ready`; launcher spawns direct + xvfb paths, group-kill + cleanup + signals work. Done: `--delay 0 static.html` under Xvfb produces a `capture.png` in runDir (even if blank).
-- [ ] **P4 — Capture spike (risk burner).** Verify non-blank viewport-sized `capturePage` hidden under Xvfb on pinned Electron; test `alert.html`; decide offscreen/`paint`-fallback; lock window flags. Done: AT1 passes (valid 1280×800 PNG, non-blank on a two-color fixture).
-- [ ] **P5 — Publish + watchdog.** Atomic `result.json`, `COPYFILE_EXCL` publish loop, `chmod 0644`, full timeout matrix, exit 5/6 mapping, stdout-purity. Done: AT3/AT4-error/AT5/AT8 pass.
-- [ ] **P6 — Timing + concurrency + signals.** Delay-from-load, 10× parallel, SIGINT cleanup. Done: AT2/AT6/AT7 pass; full suite green both with `DISPLAY` set and under `xvfb-run -a` with display unset.
-- [ ] **P7 — Packaging + docs.** `npm pack` smoke test, global `npm i -g` install, `README.md` (prereqs, examples, exit-code table, container note), version bump. Done: fresh container `npm install && npx htmlshot page.html` works.
+- [x] **P1 — Scaffolding.** `package.json` (+exact electron pin), `bin/`+`src/`+`test/` skeleton, `--help`/`--version` only. Done: `node bin/htmlshot.js --help` exits 0.
+- [x] **P2 — Launcher validation.** Arg parser, exit 2/3/4 paths, `sanitizeBase`, stamp/rand naming, unit tests green. Done: all error-path tests pass without Electron.
+- [x] **P3 — Renderer skeleton.** `src/renderer.js` loads `file://` URL in hidden window, writes dummy `result.json`+`ready`; launcher spawns direct + xvfb paths, group-kill + cleanup + signals work. Done: `--delay 0 static.html` under Xvfb produces a `capture.png` in runDir (even if blank).
+- [x] **P4 — Capture spike (risk burner).** Verify non-blank viewport-sized `capturePage` hidden under Xvfb on pinned Electron; test `alert.html`; decide offscreen/`paint`-fallback; lock window flags. Done: AT1 passes (valid 1280×800 PNG, non-blank on a two-color fixture).
+- [x] **P5 — Publish + watchdog.** Atomic `result.json`, `COPYFILE_EXCL` publish loop, `chmod 0644`, full timeout matrix, exit 5/6 mapping, stdout-purity. Done: AT3/AT4-error/AT5/AT8 pass.
+- [x] **P6 — Timing + concurrency + signals.** Delay-from-load, 10× parallel, SIGINT cleanup. Done: AT2/AT6/AT7 pass; full suite green both with `DISPLAY` set and under `xvfb-run -a` with display unset.
+- [x] **P7 — Packaging + docs.** `npm pack` smoke test, global `npm i -g` install, `README.md` (prereqs, examples, exit-code table, container note), version bump. Done: fresh container `npm install && npx htmlshot page.html` works.
+
+## Implementation notes
+
+- Pinned `electron@44.7.2` exact. Spike: `show:false` + `offscreen:true` captures non-blank viewport PNG under X11 and `xvfb-run -a`.
+- `alert/confirm/prompt` neutralized via `file`-protocol interception (no preload, per spec); launcher watchdog is the backstop.
+- Launcher strips `WAYLAND_DISPLAY` when `DISPLAY` exists (or under xvfb) to avoid flaky Wayland+Vulkan captures; renderer retries `capturePage` once on Viz errors.
+- SIGINT/SIGTERM cleanup is synchronous so it wins the race against the supervision loop.
 
 ---
 

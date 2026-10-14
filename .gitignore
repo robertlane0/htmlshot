@@ -1,2 +1,5 @@
 AGENTS.md
 example.html
+node_modules/
+test/shots*/
+*.log
